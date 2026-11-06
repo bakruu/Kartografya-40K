@@ -1,0 +1,31 @@
+name: Çeviri / Translation
+description: Çeviri hatası veya önerisi / Report or suggest a translation fix
+labels: [translation]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Nerede? / Where?
+      description: Sayfa adresi veya dosya / Page URL or file
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Dil / Language
+      options: [Türkçe, English]
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Mevcut metin / Current text
+    validations:
+      required: true
+  - type: textarea
+    id: suggested
+    attributes:
+      label: Önerilen metin / Suggested text
+      description: Lore özel isimleri iki dilde de İngilizce kalır (Terra, Cadia, Adeptus Mechanicus...). / Lore proper nouns stay in English in both languages.
+    validations:
+      required: true

@@ -1,2 +1,2 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Normalize all text files to LF on every OS (keeps Biome format checks stable on Windows)
+* text=auto eol=lf

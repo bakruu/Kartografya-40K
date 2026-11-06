@@ -1,0 +1,18 @@
+/* Design tokens. Extended as the UI grows. */
+:root {
+  color-scheme: dark;
+  --color-bg: #0a0c12;
+  --color-text: #e8e6df;
+  --color-text-muted: #a5a39b;
+  --space-s: 0.5rem;
+  --space-m: 1rem;
+  --space-l: 2rem;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}

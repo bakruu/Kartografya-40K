@@ -1,0 +1,32 @@
+name: Hata / Bug
+description: Bir hata bildirin / Report a bug
+labels: [bug]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Ne oldu? / What happened?
+      description: Ne bekliyordunuz, ne oldu? / What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Tekrar etme adımları / Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Sayfa adresi / Page URL
+  - type: input
+    id: device
+    attributes:
+      label: Cihaz ve tarayıcı / Device and browser
+      placeholder: Android 12, Chrome 130
+    validations:
+      required: true
