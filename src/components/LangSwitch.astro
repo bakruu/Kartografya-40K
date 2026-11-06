@@ -1,0 +1,12 @@
+---
+import { type Lang, t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const other: Lang = lang === 'tr' ? 'en' : 'tr';
+---
+
+<a data-lang-switch href={`/${other}/`} hreflang={other} lang={other}>{t('lang.switch', lang)}</a>

@@ -14,7 +14,7 @@
 
 ### Yeni dünya ekleme
 
-Alanlar [src/content/schemas.ts](src/content/schemas.ts) dosyasında tanımlı. Örnek için [src/content/worlds/](src/content/worlds/) klasörüne bakın. Yeni bir `classification` eklerseniz çevirisini `src/i18n/tr.json` ve `en.json` dosyalarına da ekleyin.
+Alanlar [src/content/schemas.ts](src/content/schemas.ts) dosyasında tanımlı. Örnek için [src/content/worlds/](src/content/worlds/) klasörüne bakın. Yeni bir `classification` veya `factions` değeri eklerseniz çevirisini `src/i18n/tr.json` ve `en.json` dosyalarına da ekleyin.
 
 1. `src/content/worlds/` altına iki dosya ekleyin: `<slug>.tr.md` ve `<slug>.en.md`.
 2. `lang` dışındaki tüm alanlar iki dosyada aynı olmalı.
@@ -41,7 +41,7 @@ pnpm build
 
 ### Adding a world
 
-The fields are defined in [src/content/schemas.ts](src/content/schemas.ts). See [src/content/worlds/](src/content/worlds/) for examples. If you add a new `classification`, add its translation to `src/i18n/tr.json` and `en.json` too.
+The fields are defined in [src/content/schemas.ts](src/content/schemas.ts). See [src/content/worlds/](src/content/worlds/) for examples. If you add a new `classification` or `factions` value, add its translation to `src/i18n/tr.json` and `en.json` too.
 
 1. Add two files under `src/content/worlds/`: `<slug>.tr.md` and `<slug>.en.md`.
 2. Every field except `lang` must match in both files.

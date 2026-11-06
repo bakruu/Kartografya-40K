@@ -29,4 +29,12 @@ const { lang } = Astro.props;
     padding: var(--space-m);
     color: var(--color-text-muted);
   }
+
+  @media (max-width: 767px) {
+    footer {
+      padding: var(--space-xs) var(--space-s);
+      font-size: 0.75rem;
+      line-height: 1.25;
+    }
+  }
 </style>

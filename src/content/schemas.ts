@@ -24,6 +24,15 @@ export const worldStatuses = ['active', 'destroyed', 'lost', 'contested', 'warp-
 
 export const riftSides = ['imperium-sanctus', 'imperium-nihilus', 'n/a'] as const;
 
+export const factions = [
+  'imperium',
+  'adeptus-custodes',
+  'adeptus-mechanicus',
+  'astra-militarum',
+  'ultramarines',
+  'blood-angels',
+] as const;
+
 const kebabCase = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/);
 
 export const worldSchema = z.strictObject({
@@ -43,7 +52,7 @@ export const worldSchema = z.strictObject({
     m42: z.strictObject({ status: z.enum(worldStatuses), side: z.enum(riftSides) }),
   }),
   tags: z.array(kebabCase),
-  factions: z.array(kebabCase).min(1),
+  factions: z.array(z.enum(factions)).min(1),
   sources: z.array(z.string().min(1)).min(1),
   approximate: z.boolean(),
 });

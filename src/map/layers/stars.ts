@@ -25,6 +25,8 @@ export interface StarsLayer {
   /** Worlds occupy the first vertices, in input order; background stars follow. */
   worldCount: number;
   setViewport(drawingBufferHeight: number, fovRadians: number, pixelRatio: number): void;
+  /** World indexes to emphasize. Uses uniforms, so no vertex data is uploaded again. */
+  setHighlight(hovered: number | null, selected: number | null): void;
   dispose(): void;
 }
 
@@ -96,6 +98,8 @@ export function createStars(worlds: readonly StarPosition[]): StarsLayer {
     uniforms: {
       uPixelScale: { value: 1 },
       uPixelRatio: { value: 1 },
+      uHovered: { value: -1 },
+      uSelected: { value: -1 },
     },
     transparent: true,
     depthWrite: false,
@@ -113,6 +117,11 @@ export function createStars(worlds: readonly StarPosition[]): StarsLayer {
       const { uPixelScale, uPixelRatio } = material.uniforms;
       if (uPixelScale) uPixelScale.value = drawingBufferHeight / (2 * Math.tan(fovRadians / 2));
       if (uPixelRatio) uPixelRatio.value = pixelRatio;
+    },
+    setHighlight(hovered, selected) {
+      const { uHovered, uSelected } = material.uniforms;
+      if (uHovered) uHovered.value = hovered ?? -1;
+      if (uSelected) uSelected.value = selected ?? -1;
     },
     dispose() {
       geometry.dispose();

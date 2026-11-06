@@ -1,18 +1,19 @@
 ---
-import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import { type Lang, t } from '../i18n';
 
 interface Props {
   lang: Lang;
+  worlds: CollectionEntry<'worlds'>[];
 }
 
-const { lang } = Astro.props;
-const worlds = await getCollection('worlds', ({ data }) => data.lang === lang);
+const { lang, worlds } = Astro.props;
 const mapWorlds = worlds.map(({ data: { slug, name, position } }) => ({ slug, name, position }));
 ---
 
 <div class="map">
   <canvas data-galaxy-map data-worlds={JSON.stringify(mapWorlds)} aria-label={t('map.canvas-label', lang)}></canvas>
+  <div class="tooltip" data-map-tooltip hidden></div>
   <p data-map-fallback class="fallback" hidden>{t('map.unavailable', lang)}</p>
   <noscript><p class="fallback">{t('map.unavailable', lang)}</p></noscript>
 </div>
@@ -22,6 +23,7 @@ const mapWorlds = worlds.map(({ data: { slug, name, position } }) => ({ slug, na
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
   }
 
   canvas {
@@ -32,6 +34,23 @@ const mapWorlds = worlds.map(({ data: { slug, name, position } }) => ({ slug, na
   }
 
   canvas[hidden] {
+    display: none;
+  }
+
+  .tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: var(--space-xs) var(--space-s);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-panel);
+    font-size: 0.875rem;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .tooltip[hidden] {
     display: none;
   }
 
@@ -49,20 +68,3 @@ const mapWorlds = worlds.map(({ data: { slug, name, position } }) => ({ slug, na
     display: none;
   }
 </style>
-
-<script>
-  const canvas = document.querySelector<HTMLCanvasElement>('[data-galaxy-map]');
-  const fallback = document.querySelector<HTMLElement>('[data-map-fallback]');
-
-  if (canvas) {
-    try {
-      const { init } = await import('../map/MapApp');
-      init(canvas, { worlds: JSON.parse(canvas.dataset.worlds ?? '[]') }, { debug: import.meta.env.DEV });
-      canvas.dataset.state = 'ready';
-    } catch (error) {
-      console.error(error);
-      canvas.hidden = true;
-      if (fallback) fallback.hidden = false;
-    }
-  }
-</script>
