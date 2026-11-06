@@ -1,0 +1,30 @@
+{
+  "name": "kartografya-40k",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "astro check && tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@biomejs/biome": "^2.6.5",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^24.19.2",
+    "astro": "^7.4.5",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.0"
+  }
+}

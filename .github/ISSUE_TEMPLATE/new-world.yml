@@ -1,0 +1,29 @@
+name: Yeni dünya / New world
+description: Haritaya bir dünya önerin / Suggest a world for the map
+labels: [new-world]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Dünyanın adı / World name
+    validations:
+      required: true
+  - type: dropdown
+    id: segmentum
+    attributes:
+      label: Segmentum
+      options: [solar, obscurus, pacificus, tempestus, ultima, none]
+    validations:
+      required: true
+  - type: textarea
+    id: position
+    attributes:
+      label: Yaklaşık konum / Approximate position
+      description: Konumu nasıl tahmin ettiniz? Başka bir haritanın verisini kopyalamayın. / How did you estimate it? Do not copy data from another map.
+  - type: textarea
+    id: sources
+    attributes:
+      label: Kaynaklar / Sources
+      description: Kitap veya codex adları. Metin alıntılamayın. / Book or codex names. Do not quote text.
+    validations:
+      required: true

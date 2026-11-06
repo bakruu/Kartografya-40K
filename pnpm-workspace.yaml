@@ -1,0 +1,5 @@
+overrides:
+  # Without these, @astrojs/astro2tsx resolves @emnapi/core 1.x with @emnapi/runtime 2.0-beta,
+  # which crashes `astro check` on load. Remove once upstream resolves a matching pair.
+  "@emnapi/core": 1.11.3
+  "@emnapi/runtime": 1.11.3
