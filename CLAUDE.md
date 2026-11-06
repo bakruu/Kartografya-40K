@@ -51,8 +51,9 @@ Inspiration: cartographia40k.com. **Do not copy its code, data, text or assets.*
 │  ├─ textures/              # KTX2 only, small
 │  └─ og/                    # social cards
 ├─ src/
-│  ├─ content.config.ts      # Zod schemas (Astro 6+ requires this path)
+│  ├─ content.config.ts      # collections (Astro 6+ requires this path)
 │  ├─ content/
+│  │  ├─ schemas.ts          # Zod schemas themselves, importable from unit tests
 │  │  ├─ worlds/             # one .md per world, per language: terra.tr.md, terra.en.md
 │  │  ├─ routes/             # warp routes (JSON)
 │  │  └─ regions/            # segmentum / rift polygons (JSON)
@@ -116,12 +117,12 @@ approximate: true               # position is fan-estimated
 
 Body = short dossier summary **written in our own words** (max ~250 words). Never paste text from books, wikis or other sites.
 
-- Zod schema in `src/content.config.ts` must enforce all of this.
+- The Zod schema in `src/content/schemas.ts`, wired up in `src/content.config.ts`, must enforce all of this.
 - A unit test must check: every slug has both `tr` and `en`, and their `position`/`eras` match.
 
 ## 5. Coordinate system
 
-- Galaxy plane = XZ, Y = thickness (small values).
+- Galaxy plane = XZ, Y = thickness (small values). Seen from above: +X = galactic east, +Z = galactic south.
 - Units: 1 unit = 1,000 light years. Galaxy diameter ≈ 100 units, centered on origin.
 - Terra is **not** at origin in the final map — it sits roughly in the Segmentum Solar position relative to the galactic core. Use `(0,0,0)` for Terra only in the initial stub data, and add a TODO.
 - All positions are approximate fan estimates; the UI must say so.

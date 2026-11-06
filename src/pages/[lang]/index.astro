@@ -1,5 +1,5 @@
 ---
-import { type Lang, languages, messages } from '../../i18n';
+import { type Lang, languages, t } from '../../i18n';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export function getStaticPaths() {
@@ -7,13 +7,12 @@ export function getStaticPaths() {
 }
 
 const lang = Astro.params.lang as Lang;
-const text = messages[lang];
 ---
 
 <BaseLayout lang={lang}>
   <main>
-    <h1>{text['site.title']}</h1>
-    <p>{text['home.placeholder']}</p>
+    <h1>{t('site.title', lang)}</h1>
+    <p>{t('home.placeholder', lang)}</p>
   </main>
 </BaseLayout>
 

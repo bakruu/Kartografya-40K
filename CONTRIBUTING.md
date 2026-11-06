@@ -14,10 +14,10 @@
 
 ### Yeni dünya ekleme
 
-Veri şeması Phase 1 ile tamamlanacak. Taslak şema [CLAUDE.md](CLAUDE.md) dosyasının 4. bölümünde.
+Alanlar [src/content/schemas.ts](src/content/schemas.ts) dosyasında tanımlı. Örnek için [src/content/worlds/](src/content/worlds/) klasörüne bakın. Yeni bir `classification` eklerseniz çevirisini `src/i18n/tr.json` ve `en.json` dosyalarına da ekleyin.
 
 1. `src/content/worlds/` altına iki dosya ekleyin: `<slug>.tr.md` ve `<slug>.en.md`.
-2. `position` ve `eras` alanları iki dosyada aynı olmalı.
+2. `lang` dışındaki tüm alanlar iki dosyada aynı olmalı.
 3. Özet en fazla yaklaşık 250 kelime olmalı ve `sources` alanında kaynak kitaplar listelenmeli.
 
 ### PR açmadan önce
@@ -41,10 +41,10 @@ pnpm build
 
 ### Adding a world
 
-The data schema lands in Phase 1. The draft is in section 4 of [CLAUDE.md](CLAUDE.md).
+The fields are defined in [src/content/schemas.ts](src/content/schemas.ts). See [src/content/worlds/](src/content/worlds/) for examples. If you add a new `classification`, add its translation to `src/i18n/tr.json` and `en.json` too.
 
 1. Add two files under `src/content/worlds/`: `<slug>.tr.md` and `<slug>.en.md`.
-2. `position` and `eras` must match in both files.
+2. Every field except `lang` must match in both files.
 3. Keep the summary to about 250 words at most, and list source books under `sources`.
 
 ### Before opening a PR

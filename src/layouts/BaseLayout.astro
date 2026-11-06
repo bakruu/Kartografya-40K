@@ -1,5 +1,5 @@
 ---
-import { type Lang, messages } from '../i18n';
+import { type Lang, t } from '../i18n';
 import '../styles/tokens.css';
 
 interface Props {
@@ -7,7 +7,6 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const text = messages[lang];
 ---
 
 <!doctype html>
@@ -15,12 +14,12 @@ const text = messages[lang];
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{text['site.title']}</title>
+    <title>{t('site.title', lang)}</title>
   </head>
   <body>
     <slot />
     <footer>
-      <small>{text['legal.disclaimer']}</small>
+      <small>{t('legal.disclaimer', lang)}</small>
     </footer>
   </body>
 </html>
