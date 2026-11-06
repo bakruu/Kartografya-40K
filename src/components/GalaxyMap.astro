@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import { type Lang, t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const worlds = await getCollection('worlds', ({ data }) => data.lang === lang);
+const mapWorlds = worlds.map(({ data: { slug, name, position } }) => ({ slug, name, position }));
+---
+
+<div class="map">
+  <canvas data-galaxy-map data-worlds={JSON.stringify(mapWorlds)} aria-label={t('map.canvas-label', lang)}></canvas>
+  <p data-map-fallback class="fallback" hidden>{t('map.unavailable', lang)}</p>
+  <noscript><p class="fallback">{t('map.unavailable', lang)}</p></noscript>
+</div>
+
+<style>
+  .map {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  canvas[hidden] {
+    display: none;
+  }
+
+  .fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: var(--space-l);
+    text-align: center;
+  }
+
+  .fallback[hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-galaxy-map]');
+  const fallback = document.querySelector<HTMLElement>('[data-map-fallback]');
+
+  if (canvas) {
+    try {
+      const { init } = await import('../map/MapApp');
+      init(canvas, { worlds: JSON.parse(canvas.dataset.worlds ?? '[]') }, { debug: import.meta.env.DEV });
+      canvas.dataset.state = 'ready';
+    } catch (error) {
+      console.error(error);
+      canvas.hidden = true;
+      if (fallback) fallback.hidden = false;
+    }
+  }
+</script>

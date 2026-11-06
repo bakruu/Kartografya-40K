@@ -75,6 +75,7 @@ Inspiration: cartographia40k.com. **Do not copy its code, data, text or assets.*
 │  │  ├─ shaders/            # .glsl files
 │  │  ├─ picking.ts          # raycast / GPU picking
 │  │  ├─ quality.ts          # auto quality tiers (low/medium/high)
+│  │  ├─ debug.ts            # FPS / draw call overlay (dev only)
 │  │  └─ events.ts           # typed event bus: select, hover, eraChange
 │  ├─ components/            # .astro UI: Sidebar, Dossier, LayerToggles, EraSwitch, LangSwitch, SearchBox
 │  ├─ layouts/

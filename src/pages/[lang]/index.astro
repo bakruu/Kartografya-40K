@@ -1,4 +1,5 @@
 ---
+import GalaxyMap from '../../components/GalaxyMap.astro';
 import { type Lang, languages, t } from '../../i18n';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
@@ -12,12 +13,31 @@ const lang = Astro.params.lang as Lang;
 <BaseLayout lang={lang}>
   <main>
     <h1>{t('site.title', lang)}</h1>
-    <p>{t('home.placeholder', lang)}</p>
+    <GalaxyMap lang={lang} />
   </main>
 </BaseLayout>
 
 <style>
+  :global(body) {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
   main {
-    padding: var(--space-l) var(--space-m);
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+
+  h1 {
+    position: absolute;
+    top: var(--space-m);
+    left: var(--space-m);
+    z-index: 1;
+    margin: 0;
+    font-size: 1.25rem;
+    pointer-events: none;
   }
 </style>

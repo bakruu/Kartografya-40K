@@ -36,7 +36,7 @@ pnpm dev
 | `pnpm lint`      | Biome denetimi                                                                  |
 | `pnpm typecheck` | `astro check` ve `tsc --noEmit`                                                 |
 | `pnpm test`      | Vitest birim testleri                                                           |
-| `pnpm test:e2e`  | Playwright duman testleri (ilk seferde `pnpm exec playwright install chromium`) |
+| `pnpm test:e2e`  | Playwright duman testleri (ilk seferde `pnpm exec playwright install`) |
 
 Katkıda bulunmak için [CONTRIBUTING.md](CONTRIBUTING.md) dosyasını okuyun.
 
@@ -80,7 +80,7 @@ pnpm dev
 | `pnpm lint`      | Biome check                                                                 |
 | `pnpm typecheck` | `astro check` and `tsc --noEmit`                                            |
 | `pnpm test`      | Vitest unit tests                                                           |
-| `pnpm test:e2e`  | Playwright smoke tests (first run: `pnpm exec playwright install chromium`) |
+| `pnpm test:e2e`  | Playwright smoke tests (first run: `pnpm exec playwright install`) |
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) to contribute.
 

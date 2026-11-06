@@ -1,6 +1,7 @@
 {
   "site.title": "Kartografya 40K",
-  "home.placeholder": "İnteraktif galaksi haritası yapım aşamasında.",
+  "map.canvas-label": "Warhammer 40,000 galaksisinin interaktif 3B haritası",
+  "map.unavailable": "Harita bu tarayıcıda açılamadı. Haritayı görmek için WebGL ve JavaScript gerekir.",
   "legal.disclaimer": "Resmî olmayan, hayranlar tarafından yapılmış bir projedir. Games Workshop ile bağlantılı değildir ve Games Workshop tarafından onaylanmamıştır. Warhammer 40,000 ile ilişkili tüm isimler, ırklar, konumlar ve markalar © Games Workshop Ltd. İzinsiz kullanılmıştır, statülerine itiraz amacı taşımaz. Konumlar yaklaşık, hayran tahminleridir.",
   "classification.throne-world": "Taht Dünyası",
   "classification.forge-world": "Dökümhane Dünyası",
