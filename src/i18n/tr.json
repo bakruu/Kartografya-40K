@@ -1,5 +1,14 @@
 {
   "site.title": "Kartografya 40K",
   "home.placeholder": "İnteraktif galaksi haritası yapım aşamasında.",
-  "legal.disclaimer": "Resmî olmayan, hayranlar tarafından yapılmış bir projedir. Games Workshop ile bağlantılı değildir ve Games Workshop tarafından onaylanmamıştır. Warhammer 40,000 ile ilişkili tüm isimler, ırklar, konumlar ve markalar © Games Workshop Ltd. İzinsiz kullanılmıştır, statülerine itiraz amacı taşımaz. Konumlar yaklaşık, hayran tahminleridir."
+  "legal.disclaimer": "Resmî olmayan, hayranlar tarafından yapılmış bir projedir. Games Workshop ile bağlantılı değildir ve Games Workshop tarafından onaylanmamıştır. Warhammer 40,000 ile ilişkili tüm isimler, ırklar, konumlar ve markalar © Games Workshop Ltd. İzinsiz kullanılmıştır, statülerine itiraz amacı taşımaz. Konumlar yaklaşık, hayran tahminleridir.",
+  "classification.throne-world": "Taht Dünyası",
+  "classification.forge-world": "Dökümhane Dünyası",
+  "classification.fortress-world": "Kale Dünyası",
+  "classification.chapter-homeworld": "Bölük Anavatanı",
+  "status.active": "Aktif",
+  "status.destroyed": "Yok edildi",
+  "status.lost": "Kayıp",
+  "status.contested": "Çatışmalı",
+  "status.warp-rift": "Warp yarığında"
 }
