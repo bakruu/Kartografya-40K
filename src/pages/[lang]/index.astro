@@ -1,5 +1,9 @@
 ---
+import { getCollection } from 'astro:content';
+import Dossier from '../../components/Dossier.astro';
 import GalaxyMap from '../../components/GalaxyMap.astro';
+import LangSwitch from '../../components/LangSwitch.astro';
+import Sidebar from '../../components/Sidebar.astro';
 import { type Lang, languages, t } from '../../i18n';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
@@ -8,14 +12,43 @@ export function getStaticPaths() {
 }
 
 const lang = Astro.params.lang as Lang;
+const worlds = (await getCollection('worlds', ({ data }) => data.lang === lang)).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name, lang),
+);
 ---
 
 <BaseLayout lang={lang}>
-  <main>
+  <header>
     <h1>{t('site.title', lang)}</h1>
-    <GalaxyMap lang={lang} />
+    <div class="actions">
+      <button type="button" class="toggle" data-sidebar-toggle aria-expanded="false" aria-controls="world-sidebar">
+        {t('sidebar.toggle', lang)}
+      </button>
+      <LangSwitch lang={lang} />
+    </div>
+  </header>
+  <main>
+    <Sidebar lang={lang} worlds={worlds} />
+    <div class="stage">
+      <GalaxyMap lang={lang} worlds={worlds} />
+      <Dossier lang={lang} worlds={worlds} />
+    </div>
   </main>
+  <p
+    class="announcer"
+    data-map-announcer
+    data-selected={t('map.announce-selected', lang)}
+    data-cleared={t('map.announce-cleared', lang)}
+    aria-live="polite"
+  >
+  </p>
 </BaseLayout>
+
+<script>
+  import { startMapUi } from '../../components/map-ui';
+
+  startMapUi();
+</script>
 
 <style>
   :global(body) {
@@ -25,19 +58,70 @@ const lang = Astro.params.lang as Lang;
     overflow: hidden;
   }
 
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding: var(--space-s) var(--space-m);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-panel);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+  }
+
+  .toggle {
+    display: none;
+    min-height: 2.75rem;
+    padding: 0 var(--space-m);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    cursor: pointer;
+  }
+
   main {
     position: relative;
+    display: grid;
+    grid-template-columns: 18rem minmax(0, 1fr);
     flex: 1;
     min-height: 0;
   }
 
-  h1 {
+  .stage {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .announcer {
     position: absolute;
-    top: var(--space-m);
-    left: var(--space-m);
-    z-index: 1;
-    margin: 0;
-    font-size: 1.25rem;
-    pointer-events: none;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 767px) {
+    main {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .toggle {
+      display: block;
+    }
   }
 </style>

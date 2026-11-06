@@ -103,6 +103,7 @@ describe('worldSchema', () => {
     ['a position outside the galaxy', { position: { x: 51, y: 0, z: 0 } }],
     ['an unknown status', { eras: { m41: { status: 'fine' }, m42: valid.eras.m42 } }],
     ['an M42 era without a side', { eras: { m41: valid.eras.m41, m42: { status: 'active' } } }],
+    ['an unknown faction', { factions: ['squats'] }],
     ['no sources', { sources: [] }],
     ['an unknown field', { typo: true }],
   ])('rejects %s', (_label, change) => {

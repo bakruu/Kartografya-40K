@@ -1,0 +1,141 @@
+---
+import { type CollectionEntry, render } from 'astro:content';
+import { type Lang, t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  worlds: CollectionEntry<'worlds'>[];
+}
+
+const { lang, worlds } = Astro.props;
+const dossiers = await Promise.all(
+  worlds.map(async (world) => ({ data: world.data, Content: (await render(world)).Content })),
+);
+
+const sideLabel = (side: CollectionEntry<'worlds'>['data']['eras']['m42']['side']) =>
+  side === 'n/a' ? null : t(`side.${side}`, lang);
+---
+
+<aside class="panel" data-dossier-panel aria-label={t('dossier.label', lang)} hidden>
+  <button type="button" class="close" data-dossier-close aria-label={t('dossier.close', lang)}>×</button>
+  {
+    dossiers.map(({ data, Content }) => {
+      const side = sideLabel(data.eras.m42.side);
+      return (
+        <article data-dossier={data.slug} hidden>
+          <h2>{data.name}</h2>
+          <dl>
+            <dt>{t('dossier.classification', lang)}</dt>
+            <dd>{t(`classification.${data.classification}`, lang)}</dd>
+            <dt>{t('dossier.segmentum', lang)}</dt>
+            <dd>{t(`segmentum.${data.segmentum}`, lang)}</dd>
+            <dt>{t('dossier.era-m41', lang)}</dt>
+            <dd>{t(`status.${data.eras.m41.status}`, lang)}</dd>
+            <dt>{t('dossier.era-m42', lang)}</dt>
+            <dd>
+              {t(`status.${data.eras.m42.status}`, lang)}
+              {side && ` · ${side}`}
+            </dd>
+            <dt>{t('dossier.factions', lang)}</dt>
+            <dd>{data.factions.map((faction) => t(`faction.${faction}`, lang)).join(', ')}</dd>
+          </dl>
+          <div class="summary">
+            <Content />
+          </div>
+          <h3>{t('dossier.sources', lang)}</h3>
+          <ul>
+            {data.sources.map((source) => <li>{source}</li>)}
+          </ul>
+          {data.approximate && <p class="note">{t('dossier.approximate', lang)}</p>}
+        </article>
+      );
+    })
+  }
+</aside>
+
+<style>
+  .panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    box-sizing: border-box;
+    /* Stops short of the middle of the map, where a flight leaves the selected world. */
+    width: min(24rem, 45%);
+    padding: var(--space-m);
+    border-left: 1px solid var(--color-border);
+    background: var(--color-panel);
+    overflow-y: auto;
+  }
+
+  .panel[hidden],
+  article[hidden] {
+    display: none;
+  }
+
+  .close {
+    float: right;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-text);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  h2 {
+    margin: 0 0 var(--space-m);
+    color: var(--color-accent);
+  }
+
+  h3 {
+    margin: var(--space-m) 0 var(--space-xs);
+    font-size: 0.875rem;
+  }
+
+  dl {
+    display: grid;
+    gap: var(--space-xs);
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  dt {
+    margin-top: var(--space-xs);
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .summary {
+    line-height: 1.5;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: var(--space-m);
+    font-size: 0.875rem;
+  }
+
+  .note {
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+  }
+
+  @media (max-width: 1023px) {
+    .panel {
+      top: auto;
+      left: 0;
+      width: 100%;
+      max-height: 42%;
+      border-top: 1px solid var(--color-border);
+      border-left: 0;
+    }
+  }
+</style>

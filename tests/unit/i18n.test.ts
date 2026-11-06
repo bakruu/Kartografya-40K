@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { classifications, worldStatuses } from '../../src/content/schemas';
+import {
+  classifications,
+  factions,
+  riftSides,
+  segmentums,
+  worldStatuses,
+} from '../../src/content/schemas';
 import { languages, type MessageKey, messages, t } from '../../src/i18n';
 
 describe('i18n messages', () => {
@@ -18,10 +24,13 @@ describe('i18n messages', () => {
     }
   });
 
-  it('translates every classification and status', () => {
+  it('translates every value the dossier can show', () => {
     const keys = [
       ...classifications.map((key) => `classification.${key}`),
       ...worldStatuses.map((key) => `status.${key}`),
+      ...segmentums.map((key) => `segmentum.${key}`),
+      ...factions.map((key) => `faction.${key}`),
+      ...riftSides.filter((key) => key !== 'n/a').map((key) => `side.${key}`),
     ];
     for (const key of keys) {
       expect(Object.keys(messages.tr)).toContain(key);

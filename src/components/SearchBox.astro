@@ -1,0 +1,38 @@
+---
+import { type Lang, t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<label class="search">
+  <span>{t('search.label', lang)}</span>
+  <input data-world-search type="search" placeholder={t('search.placeholder', lang)} autocomplete="off" />
+</label>
+
+<style>
+  .search {
+    display: grid;
+    gap: var(--space-xs);
+    font-size: 0.875rem;
+  }
+
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: var(--space-s);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  input::placeholder {
+    color: var(--color-text-muted);
+  }
+</style>

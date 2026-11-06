@@ -1,38 +1,5 @@
-import { expect, type Page, test } from '@playwright/test';
-
-/**
- * Counts every requestAnimationFrame call on the page. That covers all rendering, with no
- * test hook inside the map code.
- */
-async function countAnimationFrames(page: Page) {
-  await page.addInitScript(() => {
-    const original = window.requestAnimationFrame.bind(window);
-    const counter = { count: 0 };
-    Object.assign(window, { __frames: counter });
-    window.requestAnimationFrame = (callback) => {
-      counter.count += 1;
-      return original(callback);
-    };
-  });
-}
-
-function framesSoFar(page: Page): Promise<number> {
-  return page.evaluate(() => (window as unknown as { __frames: { count: number } }).__frames.count);
-}
-
-/** Resolves once no animation frame has been requested for a full second. */
-async function waitUntilIdle(page: Page) {
-  await expect
-    .poll(
-      async () => {
-        const before = await framesSoFar(page);
-        await page.waitForTimeout(1000);
-        return (await framesSoFar(page)) - before;
-      },
-      { timeout: 20_000, intervals: [0] },
-    )
-    .toBe(0);
-}
+import { expect, test } from '@playwright/test';
+import { countAnimationFrames, framesSoFar, waitForMap, waitUntilIdle } from './helpers';
 
 test.describe('galaxy map', () => {
   test.beforeEach(async ({ page }) => {
@@ -42,18 +9,18 @@ test.describe('galaxy map', () => {
   test('starts and labels the canvas in each language', async ({ page }) => {
     await page.goto('/tr/');
     const canvas = page.locator('canvas[data-galaxy-map]');
-    await expect(canvas).toHaveAttribute('data-state', 'ready');
+    await waitForMap(page);
     await expect(canvas).toHaveAttribute('aria-label', /interaktif 3B harita/);
 
     await page.goto('/en/');
-    await expect(canvas).toHaveAttribute('data-state', 'ready');
+    await waitForMap(page);
     await expect(canvas).toHaveAttribute('aria-label', /Interactive 3D map/);
   });
 
   test('renders something other than the background', async ({ page }) => {
     await page.goto('/en/');
     const canvas = page.locator('canvas[data-galaxy-map]');
-    await expect(canvas).toHaveAttribute('data-state', 'ready');
+    await waitForMap(page);
     await waitUntilIdle(page);
 
     const screenshot = await canvas.screenshot();
@@ -75,7 +42,7 @@ test.describe('galaxy map', () => {
 
   test('renders no frames while idle', async ({ page }) => {
     await page.goto('/en/');
-    await expect(page.locator('canvas[data-galaxy-map]')).toHaveAttribute('data-state', 'ready');
+    await waitForMap(page);
     await waitUntilIdle(page);
 
     const before = await framesSoFar(page);
@@ -86,7 +53,7 @@ test.describe('galaxy map', () => {
   test('renders while dragged, then returns to idle', async ({ page }) => {
     await page.goto('/en/');
     const canvas = page.locator('canvas[data-galaxy-map]');
-    await expect(canvas).toHaveAttribute('data-state', 'ready');
+    await waitForMap(page);
     await waitUntilIdle(page);
 
     const before = await framesSoFar(page);
@@ -99,6 +66,22 @@ test.describe('galaxy map', () => {
 
     await expect.poll(() => framesSoFar(page)).toBeGreaterThan(before);
     await waitUntilIdle(page);
+  });
+
+  test('renders no frames when the pointer moves over empty space', async ({ page }) => {
+    await page.goto('/en/');
+    const canvas = page.locator('canvas[data-galaxy-map]');
+    await waitForMap(page);
+    await waitUntilIdle(page);
+
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error('canvas has no size');
+    const before = await framesSoFar(page);
+    // The corner of the view holds no world.
+    await page.mouse.move(box.x + 5, box.y + 5);
+    await page.mouse.move(box.x + 25, box.y + 15, { steps: 5 });
+    await page.waitForTimeout(300);
+    expect(await framesSoFar(page)).toBe(before);
   });
 
   test('shows a message when WebGL is unavailable', async ({ page }) => {

@@ -1,8 +1,10 @@
 import { Scene } from 'three';
 import { CAMERA_FOV_RADIANS, createMapCamera } from './camera';
 import type { DebugOverlay } from './debug';
+import { createEventBus, type EventBus, type MapEvents } from './events';
 import { createGalaxy } from './layers/galaxy';
 import { createStars } from './layers/stars';
+import { attachPointerPicking, pickWorld } from './picking';
 import { createRenderer, createRenderLoop } from './renderer';
 
 export interface MapWorld {
@@ -21,15 +23,21 @@ export interface MapOptions {
 }
 
 export interface MapApp {
+  on: EventBus<MapEvents>['on'];
+  /** Highlights a world and moves the camera to it, or clears the highlight when null. */
+  select(slug: string | null, options?: { instant?: boolean }): void;
   dispose(): void;
 }
 
 /** Throws if WebGL is unavailable; the caller decides what to show instead. */
 export function init(canvas: HTMLCanvasElement, data: MapData, options: MapOptions = {}): MapApp {
   const renderer = createRenderer(canvas);
-  const { camera, controls, setAspect, dispose: disposeCamera } = createMapCamera(canvas);
+  const mapCamera = createMapCamera(canvas);
+  const { camera, controls } = mapCamera;
   const galaxy = createGalaxy();
-  const stars = createStars(data.worlds.map((world) => world.position));
+  const positions = data.worlds.map((world) => world.position);
+  const stars = createStars(positions);
+  const events = createEventBus<MapEvents>();
 
   const scene = new Scene();
   scene.add(galaxy.object, stars.object);
@@ -46,10 +54,12 @@ export function init(canvas: HTMLCanvasElement, data: MapData, options: MapOptio
 
   const loop = createRenderLoop(
     () => {
+      const flying = mapCamera.updateFly(performance.now());
       // While damping settles, this update emits 'change', which requests the next frame.
       controls.update();
       renderer.render(scene, camera);
       debug?.frame();
+      if (flying) loop.request();
     },
     {
       requestAnimationFrame: (callback) => window.requestAnimationFrame(callback),
@@ -57,8 +67,43 @@ export function init(canvas: HTMLCanvasElement, data: MapData, options: MapOptio
     },
   );
 
+  let hoveredIndex: number | null = null;
+  let selectedIndex: number | null = null;
+
+  const showHighlight = () => {
+    stars.setHighlight(hoveredIndex, selectedIndex);
+    loop.request();
+  };
+
+  const picking = attachPointerPicking(
+    canvas,
+    (x, y, radius) =>
+      pickWorld(
+        x,
+        y,
+        positions,
+        camera,
+        { width: canvas.clientWidth, height: canvas.clientHeight },
+        radius,
+      ),
+    {
+      onHover(index, x, y) {
+        hoveredIndex = index;
+        showHighlight();
+        const slug = index === null ? null : (data.worlds[index]?.slug ?? null);
+        events.emit('hover', { slug, x, y });
+      },
+      onClick(index) {
+        const slug = index === null ? null : (data.worlds[index]?.slug ?? null);
+        events.emit('select', { slug });
+      },
+    },
+  );
+
   const requestFrame = () => loop.request();
+  const clearHover = () => picking.clearHover();
   controls.addEventListener('change', requestFrame);
+  controls.addEventListener('start', clearHover);
   canvas.addEventListener('webglcontextrestored', requestFrame);
 
   const resize = () => {
@@ -66,7 +111,7 @@ export function init(canvas: HTMLCanvasElement, data: MapData, options: MapOptio
     const height = canvas.clientHeight;
     if (width === 0 || height === 0) return;
     renderer.setSize(width, height, false);
-    setAspect(width / height);
+    mapCamera.setAspect(width / height);
     const pixelRatio = renderer.getPixelRatio();
     stars.setViewport(height * pixelRatio, CAMERA_FOV_RADIANS, pixelRatio);
     loop.request();
@@ -84,6 +129,17 @@ export function init(canvas: HTMLCanvasElement, data: MapData, options: MapOptio
   resize();
 
   return {
+    on: events.on,
+    select(slug, { instant = false } = {}) {
+      const index = data.worlds.findIndex((world) => world.slug === slug);
+      const world = data.worlds[index];
+      selectedIndex = world ? index : null;
+      if (world) {
+        picking.clearHover();
+        mapCamera.flyTo(world.position, { instant });
+      }
+      showHighlight();
+    },
     dispose() {
       disposed = true;
       loop.stop();
@@ -91,7 +147,10 @@ export function init(canvas: HTMLCanvasElement, data: MapData, options: MapOptio
       document.removeEventListener('visibilitychange', syncVisibility);
       canvas.removeEventListener('webglcontextrestored', requestFrame);
       controls.removeEventListener('change', requestFrame);
-      disposeCamera();
+      controls.removeEventListener('start', clearHover);
+      picking.dispose();
+      events.clear();
+      mapCamera.dispose();
       galaxy.dispose();
       stars.dispose();
       debug?.dispose();
